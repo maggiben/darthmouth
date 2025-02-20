@@ -1,0 +1,170 @@
+{
+  "id": "HYG74hPY8xIGAzPF",
+  "meta": {
+    "instanceId": "021d3c82ba2d3bc090cbf4fc81c9312668bcc34297e022bb3438c5c88a43a5ff"
+  },
+  "name": "LangChain Example - Code Tool",
+  "tags": [
+    {
+      "id": "snf16n0p2UrGP838",
+      "name": "LangChain - Example",
+      "createdAt": "2023-09-25T16:21:55.962Z",
+      "updatedAt": "2023-09-25T16:21:55.962Z"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "c22c0b8b-d085-4b9d-aa43-f02bfbfa3732",
+      "name": "When clicking \"Execute Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        680,
+        360
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "id": "424805bb-c940-4957-abf0-7463745636ce",
+      "name": "Code Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "position": [
+        1340,
+        580
+      ],
+      "parameters": {
+        "name": "my_color_selector",
+        "jsCode": "const colors = [\n    'red',\n    'green',\n    'blue',\n    'yellow',\n    'pink',\n    'white',\n    'black',\n    'orange',\n    'brown',\n];\n\nconst ignoreColors = query.split(',').map((text) => text.trim());\n\n// remove all the colors that should be ignored\nconst availableColors = colors.filter((color) => {\n    return !ignoreColors.includes(color);\n});\n\n// Select a random color\nreturn availableColors[Math.floor(Math.random() * availableColors.length)];\n",
+        "description": "Call this tool to get a random color. The input should be a string with comma-separated names of colors to exclude."
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "6f661ce1-dd64-4bbb-a41c-0bf643c48961",
+      "name": "On new manual Chat Message",
+      "type": "@n8n/n8n-nodes-langchain.manualChatTrigger",
+      "position": [
+        680,
+        580
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "id": "90aa97d6-c453-4858-b6ba-5823fb9c2ee4",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1180,
+        580
+      ],
+      "parameters": {
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "4jRB4A20cPycBqP5",
+          "name": "OpenAI account - n8n"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "a8d4a7bf-9754-483d-b75a-35132287e31d",
+      "name": "Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1180,
+        360
+      ],
+      "parameters": {
+        "options": {}
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "3d7bcabf-fbec-48c4-9c13-9141bcc38553",
+      "name": "Debug Input",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        900,
+        360
+      ],
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "input",
+              "stringValue": "Return a random color but not green or blue"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "typeVersion": 3.1
+    }
+  ],
+  "active": false,
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "87c90afe-e96b-4701-ae9f-f7254924eea0",
+  "connections": {
+    "Code Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debug Input": {
+      "main": [
+        [
+          {
+            "node": "Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On new manual Chat Message": {
+      "main": [
+        [
+          {
+            "node": "Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \"Execute Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Debug Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

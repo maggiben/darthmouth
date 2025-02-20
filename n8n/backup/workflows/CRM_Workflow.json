@@ -1,0 +1,419 @@
+{
+  "name": "CRM Workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "61c970ab-020d-4861-9e0a-76f047c84bec",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        380
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "TXfE0sZb0eTXs1IP",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hola! 👋\nMi nombre es Frai, en que puedo ayudarte hoy ?",
+        "options": {
+          "subtitle": "Comienza una conversación, estamos para ayudarte 24x7",
+          "title": "Hola! 👋"
+        }
+      },
+      "id": "c6d82f76-117c-46e3-84fa-9ead141823a5",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        140,
+        140
+      ],
+      "webhookId": "d86d3525-09f5-41e4-9397-8e6672ef1636"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        380
+      ],
+      "id": "c563296b-9826-4e87-aa2e-5ecd959c950a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "dLDrILcYXQOmLk9Y",
+          "name": "LiteLLM Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Agente",
+        "height": 527,
+        "width": 909
+      },
+      "id": "147a3c53-9a92-460d-b856-1a9d60dd05d5",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        60,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "75ebfdef-c8e2-4c3e-b716-1479d0cc2a73",
+              "name": "chatInput",
+              "value": "={{ $json?.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "59b7a20f-0626-4861-93e2-015d430c266e",
+              "name": "sessionId",
+              "value": "={{ $json?.sessionId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3381493d-c965-403e-b728-4795682e0ec3",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Tools",
+        "height": 529,
+        "width": 383,
+        "color": 6
+      },
+      "id": "6ab3268e-89d2-4cc0-a84b-484c3fa829dd",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "code": {
+          "supplyData": {
+            "code": "const { DynamicTool } = require(\"@langchain/core/tools\");\n\nconst request = (searchBox) => ({\n  url: `http://x-ray.development.fravega.com/oms-stg/order-search:80/v1/orders/search/paginated`,\n  method: 'POST',\n  encoding: 'json',\n  body: {\n    \"debitCard\": false,\n    \"creditCard\": false,\n    \"debitCardBrands\": [],\n    \"creditCardBrands\": [],\n    \"points\": false,\n    \"cash\": false,\n    \"PersonalLoan\": false,\n    \"qr\": false,\n    \"virtualPayment\": false,\n    \"coupon\": false,\n    \"gateways\": [],\n    \"bins\": [],\n    \"gatewayPaymentIds\": [],\n    \"issuingBanks\": [],\n    \"payerInfo\": [],\n    \"currentPage\": \"1\",\n    \"pageSize\": \"10\",\n    \"statusFilter\": [],\n    \"salesAgents\": [],\n    \"orderBy\": \"CreatedOn\",\n    \"sortingType\": \"DESC\",\n    \"skus\": [],\n    \"billingDocumentNumbers\": [],\n    \"searchBox\": searchBox,\n    \"createdOnDateFilter\": {\n        \"dateFrom\": null,\n        \"dateTo\": null,\n        \"when\": null\n    },\n    \"purchaseDateFilter\": {\n        \"dateFrom\": null,\n        \"dateTo\": null,\n        \"when\": null\n    },\n    \"paymentDateFilter\": {\n        \"dateFrom\": null,\n        \"dateTo\": null,\n        \"when\": null\n    },\n    \"deliveryDateFilter\": {\n        \"dateFrom\": null,\n        \"dateTo\": null,\n        \"when\": null\n    },\n    \"billingDateFilter\": {\n        \"dateFrom\": null,\n        \"dateTo\": null,\n        \"when\": null\n    },\n    \"pickUpIds\": [],\n    \"zones\": [],\n    \"logisticOperators\": [],\n    \"warehouses\": [],\n    \"coupons\": [],\n    \"authorizationCodes\": [],\n    \"loanIds\": [],\n    \"singlePayment\": false,\n    \"multiplePayment\": false,\n    \"isMixedOrder\": false,\n    \"isSimpleOrder\": false,\n    \"deliveryModes\": [],\n    \"services\": [],\n    \"sellers\": [],\n    \"channels\": [],\n    \"cashiers\": [],\n    \"paymentStores\": [],\n    \"sellingStores\": [],\n    \"deliveryStatus\": [],\n    \"discounts\": [],\n    \"allDiscounts\": false,\n    \"groupChannels\": true,\n    \"isChangeOrder\": false,\n    \"changeStatus\": []\n  },\n});\n\nconst tool = new DynamicTool({\n  name: 'search_client_orders_by_client_by',\n  description: 'Use this tool only to search for orders',\n  func: async (input) => {\n    console.log('input: ', input);\n    const response = await this.helpers.httpRequest(request(input));\n    return JSON.stringify(response);\n  }\n});\n\nreturn tool;"
+          }
+        },
+        "outputs": {
+          "output": [
+            {
+              "type": "ai_tool"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.code",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        80
+      ],
+      "id": "7ba1a51f-ebda-4da7-a8d9-5b80775f6a29",
+      "name": "Search Orders By"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool only to send whatsapp message to a phone number",
+        "method": "POST",
+        "url": "http://host.docker.internal:8080/message/sendText/Evolution-Api",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "apiKey",
+              "valueProvider": "fieldValue",
+              "value": "429683C4C977415CAAFCCE10F7D57E11"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"number\": \"{phone}\",\n    \"text\": \"{message}\"\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{phone}",
+              "description": "The phone number",
+              "type": "string"
+            },
+            {
+              "name": "{message}",
+              "description": "The message to send",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        80
+      ],
+      "id": "9d6005f2-7c1e-4a74-858b-2a237ce92683",
+      "name": "Send WhatSapp Text Message"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool only to search for notifications by client email",
+        "method": "POST",
+        "url": "http://x-ray.development.fravega.com/ccm/ccm-notifications-search:80/api/v1/notifications/search",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"destination\": \"{email}\",\n    \"paging\": {\n        \"page\": {page},\n        \"size\": {size}\n    },\n    \"sorting\": {\n        \"by\": \"createdOn\",\n        \"type\": \"DESC\"\n    },\n    \"status\": [{status}]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{email}",
+              "description": "The client email",
+              "type": "string"
+            },
+            {
+              "name": "{page}",
+              "description": "The number of page to retrieve, default to 1",
+              "type": "number"
+            },
+            {
+              "name": "{size}",
+              "description": "The page size to retrieve, default to 10",
+              "type": "number"
+            },
+            {
+              "name": "{status}",
+              "description": "The notification status, default to empty",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        360
+      ],
+      "id": "a0b3ef63-db3a-44fc-b030-7dba19fb2b7e",
+      "name": "Search Notifications by Email"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ \n$json.chatInput\n||\nJSON.parse(Object.entries($json.body)[0][0]).chatInput\n}}",
+        "options": {
+          "systemMessage": "You are a helpful assistant. Yo will use the tool response to respond to the user's query.\nIf you don't know the answer say I don't know."
+        }
+      },
+      "id": "2a8ae965-0386-4779-b8bc-020fd94c4cc6",
+      "name": "Agente",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        540,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "code": {
+          "supplyData": {
+            "code": "const { DynamicTool } = require(\"@langchain/core/tools\");\n\nconst request = (email) => ({\n  url: `http://x-ray.development.fravega.com/customer/bff-customer:80/v1/customer/search?email=${email}`,\n  method: 'GET',\n  encoding: 'json',\n});\n\nconst tool = new DynamicTool({\n  name: 'search_client_by_email',\n  description: 'Use this tool only to search for clients by email',\n  func: async (input) => {\n    console.log('input: ', input);\n    const response = await this.helpers.httpRequest(request(input));\n    return JSON.stringify(response[0]);\n  }\n});\n\nreturn tool;"
+          }
+        },
+        "outputs": {
+          "output": [
+            {
+              "type": "ai_tool"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.code",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        360
+      ],
+      "id": "f0d81e2f-3b42-4564-8800-b61d8f1494c8",
+      "name": "Search Client By Email"
+    },
+    {
+      "parameters": {
+        "code": {
+          "supplyData": {
+            "code": "const { DynamicTool } = require(\"@langchain/core/tools\");\n\nconst request = (dni) => ({\n  url: `http://x-ray.development.fravega.com/customer/bff-customer:80/v1/customer/search?documenttype=DNI&documentnumber=${dni}`,\n  method: 'GET',\n  encoding: 'json',\n});\n\nconst tool = new DynamicTool({\n  name: 'search_client_by_dni',\n  description: 'Use this tool only to search for clients by dni',\n  func: async (input) => {\n    console.log('input: ', input);\n    const response = await this.helpers.httpRequest(request(input));\n    return JSON.stringify(response[0]);\n  }\n});\n\nreturn tool;"
+          }
+        },
+        "outputs": {
+          "output": [
+            {
+              "type": "ai_tool"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.code",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        220
+      ],
+      "id": "393a4cc8-a9c9-43f3-8b1b-b8a77e51b9fa",
+      "name": "Search Client By DNI"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Orders By": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatSapp Text Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Notifications by Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente": {
+      "main": [
+        []
+      ]
+    },
+    "Search Client By Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Client By DNI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "9db7aa7e-9258-4382-9ea6-25b1f5f679fa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "82MLrITSEGNHI7qc",
+  "tags": []
+}
