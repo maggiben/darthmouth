@@ -1,6 +1,7 @@
 volumes:
   n8n_storage:
   postgres_storage:
+  redis_storage:
   open-webui:
   evolution_instances:
   flowise:
@@ -76,7 +77,7 @@ services:
     command: >
       redis-server --port 6379 --appendonly yes
     volumes:
-      - ./redis:/data
+      - redis_storage:/data
     ports:
       - 6379:6379
 
